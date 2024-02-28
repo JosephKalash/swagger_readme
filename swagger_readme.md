@@ -6,7 +6,7 @@
 ```
  pip install drf-spectacular
 ```
-Then add drf-spectacular to installed apps in **settings.py**
+Add drf-spectacular to installed apps in **settings.py**
 
 ```python
 INSTALLED_APPS = [
@@ -15,8 +15,7 @@ INSTALLED_APPS = [
 ]
 ```
 
-Register our spectacular AutoSchema with DRF.
-
+registering the drf-spectacular's AutoSchema as the default schema class for DRF for generating the OpenAPI schema, enabling Swagger documentation
 
 ```python
 REST_FRAMEWORK = {
@@ -24,12 +23,12 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 ```
-drf-spectacular has settings options. (not required for more settings check [settings](https://drf-spectacular.readthedocs.io/en/latest/settings.html))
+drf-spectacular has settings options but not required. (for more settings check [settings](https://drf-spectacular.readthedocs.io/en/latest/settings.html))
 
 Recomended example:
 ```python
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Zcoderz {project title}',
+    'TITLE': '{project title}',
     'DESCRIPTION': 'List of all api schemas for {project name}',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
@@ -53,18 +52,18 @@ urlpatterns = [
  ]
 ```
 
-Now **drf-spectacular** will automatically detect api and their properities and show them in `swagger`.
+Now **drf-spectacular** will automatically detect most of endpoints and their properities and show them in `swagger` page.
 
 
 ## Customization
-To override detected endpoint options or implement more custome documentation we can use `@extend_schema_view decorator` for `view` and `@extend_schema` for `method`
+To customize detected endpoint options or add more tailored documentation if the package couldn't detect your endpoint as you want, the `@extend_schema_view` decorator can be applied to `views`, and the `@extend_schema` decorator can be used for individual `methods`.
 
 ### Example:
 
 ```python
 @extend_schema_view(
     get=extend_schema(
-        description='Hello world',
+        description='get user info',
         parameters=[
             UserSerializer
         ]
@@ -102,21 +101,13 @@ extensions: dict[str, Any] | None = None,
 callbacks: Sequence[OpenApiCallback] | None = None,
 external_docs: dict[str, str] | str | None = None
 ```
-## Parameters
-`OpenApiParameter` is used for [query, path, header, cookie] and has all available options for them like type, location, required, etc.
+## Parameters option
+`OpenApiParameter` is utilized for specifying parameters in [query, path, header, cookie], encompassing all necessary options such as type, location, and required option, etc.
 
 `parameters` param in `extend_schema_view` accept list of `openApiParameters` or `serializers`
 
-You can pass **`get_swagger_params`** function with serializer and its wanted fields to be query parameters like example below:
-```python
-@extend_schema_view(
-    get=extend_schema(parameters=get_swagger_params(BlogSerializer, ['category', 'tag', 'description']))
-)
-```
-
 ## Response
-For detailed responses you can either pass a serializer or dictionary.
-
+To achieve a more detailed response, you have the option to pass either a serializer or a dictionary.
 ```python
 responses={
         201: OpenApiResponse(response=MyCustomSerializer,
@@ -124,11 +115,11 @@ responses={
         400: OpenApiResponse(description='Bad request (something invalid)'),
     },
 ```
-We can use `inline_serializer` func for simple response.
+We can use `inline_serializer` function for simple response. This lets you conveniently define the endpoint’s schema inline without actually writing a serializer class.
 
 ## `extend_schema` with view
 
-We can use `extend_schema` with view to implement its options to all view methods (ex. tags)
+You can use `extend_schema` with a view class to apply its options to all view methods (ex. tags that categorize this view class's endpoints under a single label on the Swagger page.)
 ```python
 @extend_schema(tags=['mfa'])
 class ExampleApiView(APIView):
@@ -139,4 +130,8 @@ class ExampleApiView(APIView):
 [extend_schema_serializer](https://drf-spectacular.readthedocs.io/en/latest/customization.html#step-4-extend-schema-serializer)
 
 [extend_schema_field](https://drf-spectacular.readthedocs.io/en/latest/customization.html?highlight=extend_schema_field#step-3-extend-schema-field-and-type-hints)
+
+## offical documentation for spectacular-drf package
+[Docs](https://drf-spectacular.readthedocs.io/en/latest/)
+
 
